@@ -15,3 +15,42 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# Các tệp do Maven tạo ra
+target/
+*.log
+*.jar
+*.war
+*.ear
+
+# Các tệp cấu hình Maven
+*.iml
+.idea/
+*.classpath
+*.project
+*.settings/
+
+# Tệp thư mục hệ thống
+.DS_Store
+Thumbs.db
+
+# Các thư mục của IDE (Eclipse, IntelliJ, VSCode, v.v.)
+*.idea/
+*.vscode/
+*.eclipse/
+*.project
+*.classpath
+
+# Các tệp của hệ điều hành (Windows/Mac/Linux)
+*.swp
+*~
+*.bak
+*.tmp
+
+# Các tệp nhạy cảm hoặc tùy chỉnh (có thể có trong môi trường phát triển)
+*.env
+*.properties
+
+# Các thư mục chứa wrapper Maven (nếu có)
+.mvn/wrapper/
+
