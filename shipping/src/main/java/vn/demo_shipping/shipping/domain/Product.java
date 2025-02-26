@@ -1,5 +1,7 @@
 package vn.demo_shipping.shipping.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,10 +24,11 @@ public class Product extends AbstractEntity<Long> {
     private Double price;
     private Double weight;
     private String image;
-    private Integer invention;
+    private Integer inventory;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
 
     @ManyToOne

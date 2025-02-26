@@ -153,10 +153,22 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     private ResponseEntity<APIResponse<String>> deleteCategory(@PathVariable Long id) {
         try {
-            String result = categoryServiceImpl.deleteCategory(id);
-            APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Success",
-                    result, LocalDateTime.now());
+            Category category = categoryServiceImpl.getCategoryById(id);
+
+            if (category == null)
+                throw new NotFoundException("Category does not exists");
+
+            if (category.getProducts().isEmpty()) {
+                String result = categoryServiceImpl.deleteCategory(id);
+                APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Success",
+                        result, LocalDateTime.now());
+                return ResponseEntity.ok(response);
+            }
+            APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Failure",
+                    "Category contains products. Must be remove the products before deleting the category!",
+                    LocalDateTime.now());
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             return ResponseEntity.ok(new APIResponse<String>(HttpStatus.BAD_REQUEST.value(), "Failure",
                     "Not found Category", LocalDateTime.now()));

@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Id do not exists in system"));
+        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Id do not exists in database"));
     }
 
     @Override
