@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "order_detail")
-public class OrderDetail {
+public class OrderDetail extends AbstractEntity<Long> {
     private Double total;
 
     @OneToMany(mappedBy = "order_detail")

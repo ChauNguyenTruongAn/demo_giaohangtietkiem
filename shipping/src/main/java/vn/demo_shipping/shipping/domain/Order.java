@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "invoices")
-public class Order {
+public class Order extends AbstractEntity<Long> {
     private String note;
     private String return_name;
     private String return_address;

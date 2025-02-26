@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/demo_web_api_ghtk
+    url: jdbc:mysql://localhost:3306/demo
     username: root
     password: root
   jpa:
