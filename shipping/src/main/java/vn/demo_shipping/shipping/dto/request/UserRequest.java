@@ -40,6 +40,12 @@ public class UserRequest {
     @NotBlank(message = "Username must be fill, username does not empty")
     private String username;
 
-    @NotBlank(message = "Please fill value for a password field!")
+    @NotBlank(message = "Please fill a value for password!")
     private String password;
+
+    @NotNull(message = "Please fill a value for address id")
+    private Long[] addresses;
+
+    @NotNull(message = "Please fill a value for invoice id")
+    private Long[] invoices;
 }

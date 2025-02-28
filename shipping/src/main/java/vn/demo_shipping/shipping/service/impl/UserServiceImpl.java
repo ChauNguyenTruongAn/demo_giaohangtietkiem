@@ -1,6 +1,8 @@
 package vn.demo_shipping.shipping.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,11 +11,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import vn.demo_shipping.shipping.domain.Address;
+import vn.demo_shipping.shipping.domain.Invoice;
 import vn.demo_shipping.shipping.domain.User;
 import vn.demo_shipping.shipping.dto.request.UserRequest;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.NullObjectException;
 import vn.demo_shipping.shipping.repository.AddressRepository;
+import vn.demo_shipping.shipping.repository.InvoiceRepository;
 import vn.demo_shipping.shipping.repository.UserRepository;
 import vn.demo_shipping.shipping.service.UserService;
 
@@ -22,6 +27,8 @@ import vn.demo_shipping.shipping.service.UserService;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final AddressRepository addressRepository;
 
     @Override
     public User addUser(User user) {
@@ -66,6 +73,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Long id, UserRequest request) {
+
+        // get address
+
+        Set<Address> newAddresses = new HashSet<>();
+
+        for (Long address_id : request.getAddresses()) {
+            Address address = addressRepository.findById(address_id).orElseThrow(
+                    () -> new NotFoundException("Invalid address or address is null"));
+            newAddresses.add(address);
+        }
+
+        // get invoice
+        Set<Invoice> newInvoices = new HashSet<>();
+        for (Long invoice_id : request.getInvoices()) {
+            Invoice invoice = invoiceRepository.findById(invoice_id).orElseThrow(
+                    () -> new NotFoundException("Invalid invoice"));
+            newInvoices.add(invoice);
+        }
+
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
 
@@ -76,6 +102,8 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(request.getEmail());
         existingUser.setUsername(request.getUsername());
         existingUser.setPassword(request.getPassword());
+        existingUser.setAddresses(newAddresses);
+        existingUser.setInvoices(newInvoices);
         return userRepository.save(existingUser);
     }
 

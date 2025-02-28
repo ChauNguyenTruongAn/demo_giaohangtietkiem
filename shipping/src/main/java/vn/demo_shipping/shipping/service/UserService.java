@@ -8,7 +8,7 @@ import vn.demo_shipping.shipping.domain.User;
 import vn.demo_shipping.shipping.dto.request.UserRequest;
 
 public interface UserService {
-     Page<User> getAllUser(int page, int size, String sort);
+    Page<User> getAllUser(int page, int size, String sort);
 
     List<User> getAllUser();
 

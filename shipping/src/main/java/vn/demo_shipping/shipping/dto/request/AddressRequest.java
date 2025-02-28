@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.demo_shipping.shipping.domain.User;
 
 @Getter
 @Setter
@@ -23,7 +22,7 @@ public class AddressRequest {
     @NotBlank(message = "District does not blank")
     private String district;
 
-    @NotBlank(message = "Ward doesnot blank")
+    @NotBlank(message = "Ward does not blank")
     private String ward;
 
     @NotBlank(message = "Street does not blank")

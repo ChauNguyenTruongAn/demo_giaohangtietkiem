@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import vn.demo_shipping.shipping.domain.Category;
 import vn.demo_shipping.shipping.domain.User;
 import vn.demo_shipping.shipping.domain.Address;
 import vn.demo_shipping.shipping.dto.request.AddressRequest;
