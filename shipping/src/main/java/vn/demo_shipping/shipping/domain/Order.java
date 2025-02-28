@@ -1,10 +1,8 @@
 package vn.demo_shipping.shipping.domain;
 
-import java.util.Set;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -35,10 +33,36 @@ public class Order extends AbstractEntity<Long> {
     private Double total_weight;
     private Double value;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
-    @OneToMany(mappedBy = "order")
-    private Set<Warehouse> warehouses;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouses;
+
+    public void addInvoice(Invoice invoice) {
+        if (invoice == null)
+            throw new IllegalArgumentException("Invalid invoice");
+        this.invoice = invoice;
+    }
+
+    public void removeInvoice(Invoice invoice) {
+        if (invoice == null)
+            throw new IllegalArgumentException("Invalid invoice");
+        this.invoice = null;
+    }
+
+    public void addWarehouse(Warehouse warehouse) {
+        if (warehouse == null)
+            throw new IllegalArgumentException("Invalid invoice");
+        this.warehouses = warehouse;
+    }
+
+    public void removeWarehouse(Warehouse warehouse) {
+        if (warehouse == null)
+            throw new IllegalArgumentException("Invalid invoice");
+        this.warehouses = null;
+    }
+
 }

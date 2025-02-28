@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Address;
 import vn.demo_shipping.shipping.domain.Invoice;
 import vn.demo_shipping.shipping.domain.User;
+import vn.demo_shipping.shipping.dto.request.AddressRequest;
+import vn.demo_shipping.shipping.dto.request.InvoiceRequest;
 import vn.demo_shipping.shipping.dto.request.UserRequest;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.NullObjectException;
@@ -31,10 +33,30 @@ public class UserServiceImpl implements UserService {
     private final AddressRepository addressRepository;
 
     @Override
-    public User addUser(User user) {
-        if (user == null)
-            throw new NullObjectException("User is null!!");
-        return userRepository.save(user);
+    public User addUser(UserRequest request) {
+        if (request == null)
+            throw new IllegalArgumentException("Invalid request!!");
+
+        User existingUser = new User();
+        existingUser.setFull_name(request.getFull_name());
+        existingUser.setGender(request.getGender());
+        existingUser.setDate_of_birth(request.getDate_of_birth());
+        existingUser.setTel(request.getTel());
+        existingUser.setEmail(request.getEmail());
+        existingUser.setUsername(request.getUsername());
+        existingUser.setPassword(request.getPassword());
+
+        for (Long address_id : request.getAddresses()) {
+            existingUser.addAddress(addressRepository.findById(address_id)
+                    .orElseThrow(() -> new NotFoundException("Not found address")));
+        }
+
+        for (Long invoice_id : request.getInvoices()) {
+            existingUser.addAddress(addressRepository.findById(invoice_id)
+                    .orElseThrow(() -> new NotFoundException("Not found address")));
+        }
+
+        return userRepository.save(existingUser);
     }
 
     @Override
@@ -105,6 +127,74 @@ public class UserServiceImpl implements UserService {
         existingUser.setAddresses(newAddresses);
         existingUser.setInvoices(newInvoices);
         return userRepository.save(existingUser);
+    }
+
+    @Override
+    public User addAddressToUser(Long id, AddressRequest request) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("User not found"));
+
+        Address address = Address.builder()
+                .province(request.getProvince())
+                .district(request.getDistrict())
+                .ward(request.getWard())
+                .street(request.getStreet())
+                .address(request.getAddress())
+                .hamlet(request.getHamlet())
+                .user(user)
+                .build();
+
+        user.addAddress(address);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User removeAddressFromUser(Long id, Long addressId) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("User not found"));
+
+        Address address = addressRepository.findById(addressId).orElseThrow(
+                () -> new NotFoundException("Address not found"));
+
+        if (!user.getAddresses().contains(address)) {
+            throw new IllegalArgumentException("Address does not belong to the user");
+        }
+
+        user.removeAddress(address);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User addInvoice(Long id, InvoiceRequest request) {
+
+        
+
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("User not found"));
+
+        Invoice invoice = Invoice.builder()
+                .total(request.getTotal())
+                // .orderDetail(request.getOrder_detail_id)
+                .build();
+
+        user.addInvoice(invoice);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User remInvoice(Long id, Long invoiceRequest) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("User not found"));
+
+        Invoice invoice = invoiceRepository.findById(invoiceRequest).orElseThrow(
+                () -> new NotFoundException("Invoice not found"));
+
+        if (!user.getInvoices().contains(invoice)) {
+            throw new IllegalArgumentException("Invoice does not belong to the user");
+        }
+
+        user.removeInvoice(invoice);
+        return userRepository.save(user);
     }
 
 }

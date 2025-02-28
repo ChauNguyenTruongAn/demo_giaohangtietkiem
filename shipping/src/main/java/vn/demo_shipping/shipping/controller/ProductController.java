@@ -125,19 +125,9 @@ public class ProductController {
             if (category == null)
                 throw new NotFoundException("Category does not exists");
 
-            Product product = productServiceImpl
-                    .addProduct(Product.builder()
-                            .name(request.getName())
-                            .price(request.getPrice())
-                            .weight(request.getWeight())
-                            .image(request.getImage().isEmpty() ? "https://via.placeholder.com/150"
-                                    : request.getImage())
-                            .inventory(request.getInventory())
-                            .category(category)
-                            .build());
             APIResponse<Product> response = new APIResponse<>(HttpStatus.CREATED.value(),
                     "Create a new product success",
-                    product, LocalDateTime.now());
+                    productServiceImpl.addProduct(request), LocalDateTime.now());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             APIResponse<Product> response = new APIResponse<>(HttpStatus.CREATED.value(),

@@ -1,10 +1,14 @@
 package vn.demo_shipping.shipping.domain;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +35,7 @@ public class Product extends AbstractEntity<Long> {
     @JsonBackReference
     private Category category;
 
-    @ManyToOne
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_detail_id")
-    private OrderDetail order_detail;
+    private Set<OrderDetail> order_detail;
 }

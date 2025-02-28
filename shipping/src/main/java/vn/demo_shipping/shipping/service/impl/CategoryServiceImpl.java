@@ -43,7 +43,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category addCategory(Category category) {
+    public Category addCategory(CategoryRequest request) {
+
+        Category category = Category.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
         return categoryRepository.save(category);
     }
 

@@ -29,16 +29,32 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final OrderDetailRepository orderDetailRepository;
 
     @Override
-    public Invoice addInvoice(Invoice invoice) {
-        if (invoice == null)
+    public Invoice addInvoice(InvoiceRequest request) {
+        if (request == null)
             throw new NullObjectException("Invoice is null!!");
-        return invoiceRepository.save(invoice);
+
+        // get user
+        User user = userRepository.findById(request.getUser_id()).orElseThrow(
+                () -> new NotFoundException("User not found"));
+
+        // order detail
+        OrderDetail orderDetail = orderDetailRepository.findById(request.getOrder_detail_id()).orElseThrow(
+                () -> new NotFoundException("Invalid Order Detail"));
+
+        // get old invoice
+        Invoice existingInvoice = new Invoice();
+        // set new value
+        existingInvoice.setTotal(request.getTotal());
+        existingInvoice.setUser(user);
+        existingInvoice.addOrderDetail(orderDetail);
+
+        return invoiceRepository.save(existingInvoice);
     }
 
     @Override
     public String deleteInvoice(Long id) {
         if (!invoiceRepository.existsById(id))
-            throw new NullObjectException("Invoice is null!!");
+            throw new NullObjectException("Invoice does not exists!!");
         invoiceRepository.deleteById(id);
         return "Delete invoice success";
     }
@@ -87,7 +103,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // set new value
         existingInvoice.setTotal(request.getTotal());
         existingInvoice.setUser(user);
-        existingInvoice.setOrderDetail(orderDetail);
+        existingInvoice.addOrderDetail(orderDetail);
 
         // update
         return invoiceRepository.save(existingInvoice);

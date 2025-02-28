@@ -14,9 +14,9 @@ public interface ProductService {
 
     Product getProductById(Long id);
 
-    Product addProduct(Product Product);
+    Product addProduct(ProductRequest request);
 
-    Product updateProduct(Long id, ProductRequest Product);
+    Product updateProduct(Long id, ProductRequest product);
 
     String deleteProduct(Long id);
 }

@@ -116,14 +116,10 @@ public class CategoryController {
     @PostMapping
     private ResponseEntity<APIResponse<Category>> createNewCategory(@Valid @RequestBody CategoryRequest request) {
         try {
-            Category category = categoryServiceImpl
-                    .addCategory(Category.builder()
-                            .name(request.getName())
-                            .description(request.getDescription())
-                            .build());
+
             APIResponse<Category> response = new APIResponse<>(HttpStatus.CREATED.value(),
                     "Create a new category success",
-                    category, LocalDateTime.now());
+                    categoryServiceImpl.addCategory(request), LocalDateTime.now());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             APIResponse<Category> response = new APIResponse<>(HttpStatus.CREATED.value(),
@@ -158,15 +154,9 @@ public class CategoryController {
             if (category == null)
                 throw new NotFoundException("Category does not exists");
 
-            if (category.getProducts().isEmpty()) {
-                String result = categoryServiceImpl.deleteCategory(id);
-                APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Success",
-                        result, LocalDateTime.now());
-                return ResponseEntity.ok(response);
-            }
-            APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Failure",
-                    "Category contains products. Must be remove the products before deleting the category!",
-                    LocalDateTime.now());
+            String result = categoryServiceImpl.deleteCategory(id);
+            APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Success",
+                    result, LocalDateTime.now());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

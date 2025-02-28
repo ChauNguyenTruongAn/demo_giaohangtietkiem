@@ -14,7 +14,7 @@ public interface InvoiceService {
 
     Invoice getInvoiceById(Long id);
 
-    Invoice addInvoice(Invoice invoice);
+    Invoice addInvoice(InvoiceRequest request);
 
     Invoice updateInvoice(Long id, InvoiceRequest request);
 

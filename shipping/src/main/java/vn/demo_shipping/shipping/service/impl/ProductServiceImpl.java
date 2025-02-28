@@ -25,8 +25,20 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Product addProduct(Product product) {
-        return productRepository.save(product);
+    public Product addProduct(ProductRequest product) {
+
+        Category category = categoryRepository.findById(product.getCategory_id()).orElseThrow(
+                () -> new NotFoundException("Not found Category"));
+
+        Product currentProduct = new Product();
+        currentProduct.setName(product.getName());
+        currentProduct.setPrice(product.getPrice());
+        currentProduct.setWeight(product.getWeight());
+        currentProduct.setImage(product.getImage());
+        currentProduct.setInventory(product.getInventory());
+        currentProduct.setCategory(category);
+
+        return productRepository.save(currentProduct);
     }
 
     @Override

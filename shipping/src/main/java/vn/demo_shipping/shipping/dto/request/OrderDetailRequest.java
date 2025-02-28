@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.demo_shipping.shipping.domain.InvoiceProductId;
 
 @Getter
 @Setter
@@ -17,6 +18,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Valid
 public class OrderDetailRequest {
+
+    @NotNull(message = "OrderDetail can not null")
+    private InvoiceProductId id;
+
     @NotNull(message = "Total is not null")
     @Min(0)
     private double total;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Invoice;
+import vn.demo_shipping.shipping.domain.InvoiceProductId;
 import vn.demo_shipping.shipping.domain.OrderDetail;
 import vn.demo_shipping.shipping.domain.Product;
 import vn.demo_shipping.shipping.dto.request.OrderDetailRequest;
@@ -38,7 +39,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public String deleteOrderDetail(Long id) {
+    public String deleteOrderDetail(InvoiceProductId id) {
         if (!orderDetailRepository.existsById(id))
             throw new NullObjectException("OrderDetail is null!!");
         orderDetailRepository.deleteById(id);
@@ -66,13 +67,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public OrderDetail getOrderDetailById(Long id) {
+    public OrderDetail getOrderDetailById(InvoiceProductId id) {
         return orderDetailRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("OrderDetail not found"));
     }
 
     @Override
-    public OrderDetail updateOrderDetail(Long id, OrderDetailRequest request) {
+    public OrderDetail updateOrderDetail(InvoiceProductId id, OrderDetailRequest request) {
 
         // get products
         Set<Product> newProducts = new HashSet<>();

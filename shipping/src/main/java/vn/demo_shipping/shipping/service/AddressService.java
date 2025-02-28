@@ -16,7 +16,7 @@ public interface AddressService {
 
     Address addAddress(Address Address);
 
-    Address updateAddress(Long id, AddressRequest Address);
+    Address updateAddress(Long id, AddressRequest request);
 
     String deleteAddress(Long id);
 }

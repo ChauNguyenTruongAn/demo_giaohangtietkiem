@@ -1,5 +1,6 @@
 package vn.demo_shipping.shipping.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -27,7 +28,7 @@ public class Address extends AbstractEntity<Long> {
     private String address;
     private String hamlet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     public User user;
 }

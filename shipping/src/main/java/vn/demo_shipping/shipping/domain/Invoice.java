@@ -1,9 +1,12 @@
 package vn.demo_shipping.shipping.domain;
 
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +24,29 @@ import lombok.Setter;
 public class Invoice extends AbstractEntity<Long> {
     private Double total;
 
-    @OneToOne(mappedBy = "invoice")
-    private OrderDetail orderDetail;
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderDetail> orderDetails;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void addOrderDetail(OrderDetail orderDetail) {
+        if (orderDetail == null) {
+            throw new IllegalArgumentException("Invalid order detail");
+        }
+        if (!orderDetails.contains(orderDetail)) {
+            orderDetail.setInvoice(this);
+            orderDetails.add(orderDetail);
+        }
+    }
+
+    public void removeOrderDetail(OrderDetail orderDetail) {
+        if (orderDetail == null) {
+            throw new IllegalArgumentException("Invalid order detail");
+        }
+
+        orderDetail.setInvoice(null);
+        orderDetails.remove(orderDetail);
+    }
 }
