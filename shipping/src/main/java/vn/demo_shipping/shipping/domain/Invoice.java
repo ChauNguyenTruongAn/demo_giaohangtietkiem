@@ -36,6 +36,8 @@ public class Invoice extends AbstractEntity<Long> {
     @JsonBackReference
     private User user;
 
+    private Long address_id;
+
     public void addOrderDetail(OrderDetail orderDetail) {
         if (orderDetail == null) {
             throw new IllegalArgumentException("Invalid order detail");

@@ -1,6 +1,9 @@
 package vn.demo_shipping.shipping.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,12 +12,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import vn.demo_shipping.shipping.domain.Address;
 import vn.demo_shipping.shipping.domain.Invoice;
 import vn.demo_shipping.shipping.domain.Order;
+import vn.demo_shipping.shipping.domain.OrderDetail;
+import vn.demo_shipping.shipping.domain.User;
 import vn.demo_shipping.shipping.domain.Warehouse;
 import vn.demo_shipping.shipping.dto.request.OrderRequest;
+import vn.demo_shipping.shipping.dto.request.ShippingAddressRequest;
+import vn.demo_shipping.shipping.dto.request.ShippingProductRequest;
+import vn.demo_shipping.shipping.dto.request.ShippingRequest;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.NullObjectException;
+import vn.demo_shipping.shipping.repository.AddressRepository;
 import vn.demo_shipping.shipping.repository.InvoiceRepository;
 import vn.demo_shipping.shipping.repository.OrderRepository;
 import vn.demo_shipping.shipping.repository.WarehouseRepository;
@@ -27,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final InvoiceRepository invoiceRepository;
     private final WarehouseRepository warehouseRepository;
+    private final AddressRepository addressRepository;
 
     @Override
     public Order addOrder(OrderRequest request) {
@@ -132,5 +143,58 @@ public class OrderServiceImpl implements OrderService {
         existingOrder.setInvoice(invoice);
         existingOrder.setWarehouses(warehouse);
         return orderRepository.save(existingOrder);
+    }
+
+    public ShippingRequest shippingOrder(OrderRequest orderRequest) {
+
+        Invoice invoice = invoiceRepository.findById(orderRequest.getInvoice_id())
+                .orElseThrow(() -> new NotFoundException("Not found Invoice"));
+
+        Warehouse warehouse = warehouseRepository.findById(orderRequest.getWarehouse_id())
+                .orElseThrow(() -> new NotFoundException("Not found Warehouse"));
+
+        Address address = addressRepository.findById(invoice.getAddress_id())
+                .orElseThrow(() -> new NotFoundException("Not found Warehouse"));
+
+        List<ShippingProductRequest> shippingProductRequests = new ArrayList<>();
+
+        for (OrderDetail orderDetail : invoice.getOrderDetails()) {
+            shippingProductRequests.add(
+                    ShippingProductRequest.builder()
+                            .name(orderDetail.getProduct().getName())
+                            .weight(orderDetail.getProduct().getWeight())
+                            .quantity(orderDetail.getQuantity())
+                            .product_code(orderDetail.getProduct().getId().toString())
+                            .build());
+        }
+
+        User user = invoice.getUser();
+
+        ShippingAddressRequest shippingAddressRequest = ShippingAddressRequest.builder()
+                .id(invoice.getId().toString())
+                .pick_name(warehouse.getPick_name())
+                .pick_money(warehouse.getPick_money())
+                .pick_address(warehouse.getPick_address())
+                .pick_province(warehouse.getPick_province())
+                .pick_district(warehouse.getPick_district())
+                .pick_tel(warehouse.getPick_tel())
+                .name(user.getFull_name())
+                .address(address.getAddress())
+                .province(address.getProvince())
+                .district(address.getDistrict())
+                .ward(address.getWard())
+                .street(address.getStreet())
+                .hamlet(address.getHamlet())
+                .tel(user.getTel())
+                .email(user.getEmail())
+                .return_name(orderRequest.getReturn_name())
+                .return_address(orderRequest.getReturn_address())
+                .return_province(orderRequest.getReturn_province())
+                .return_ward(orderRequest.getReturn_ward())
+                .return_tel(orderRequest.getReturn_tel())
+                .value(10000.0)
+                .build();
+
+        return ShippingRequest.builder().products(shippingProductRequests).order(shippingAddressRequest).build();
     }
 }

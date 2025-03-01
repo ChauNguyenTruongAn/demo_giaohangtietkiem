@@ -22,4 +22,6 @@ public class InvoiceRequest {
     private InvoiceProductId order_detail_id;
 
     private Long user_id;
+
+    private Long address_id;
 }
