@@ -120,12 +120,12 @@ public class OrderController {
             Order order = orderServiceImpl
                     .addOrder(request);
             APIResponse<Order> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Create a new order success",
+                    "Successfully created a new order.",
                     order, LocalDateTime.now());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             APIResponse<Order> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Create a new order success",
+                    "New order created failure",
                     null, LocalDateTime.now());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -136,8 +136,8 @@ public class OrderController {
             @Valid @RequestBody OrderRequest request) {
         try {
             Order order = orderServiceImpl.updateOrder(id, request);
-            APIResponse<Order> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Update a order success",
+            APIResponse<Order> response = new APIResponse<>(HttpStatus.OK.value(),
+                    "Successfully updated an order",
                     order, LocalDateTime.now());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -156,8 +156,8 @@ public class OrderController {
             if (order == null)
                 throw new NotFoundException("Order does not exists");
 
-            APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Failure",
-                    "Order contains products. Must be remove the products before deleting the order!",
+            APIResponse<String> response = new APIResponse<>(HttpStatus.OK.value(), "Successful",
+                    orderServiceImpl.deleteOrder(id),
                     LocalDateTime.now());
             return ResponseEntity.ok(response);
 

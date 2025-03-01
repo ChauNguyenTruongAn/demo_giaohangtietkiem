@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,21 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import vn.demo_shipping.shipping.domain.User;
 import vn.demo_shipping.shipping.domain.Address;
 import vn.demo_shipping.shipping.dto.request.AddressRequest;
 import vn.demo_shipping.shipping.dto.response.APIResponse;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.ServiceException;
 import vn.demo_shipping.shipping.service.impl.AddressServiceImpl;
-import vn.demo_shipping.shipping.service.impl.UserServiceImpl;
+
 
 @RestController
 @RequestMapping("/v1/api/addresses")
 @RequiredArgsConstructor
 public class AddressController {
     private final AddressServiceImpl addressServiceImpl;
-    private final UserServiceImpl userServiceImpl;
 
     @GetMapping("/all")
     private ResponseEntity<APIResponse<List<Address>>> getAllAddress() {
@@ -70,12 +67,12 @@ public class AddressController {
             @RequestParam(required = false, defaultValue = "asc") String sort) {
 
         try {
-            Page<Address> categories = addressServiceImpl.getAllAddress(page, size, sort);
-            if (categories.isEmpty()) {
+            Page<Address> address = addressServiceImpl.getAllAddress(page, size, sort);
+            if (address.isEmpty()) {
                 APIResponse<Page<Address>> response = new APIResponse<>(
                         HttpStatus.NO_CONTENT.value(),
-                        "No categories found",
-                        categories,
+                        "No address found",
+                        address,
                         LocalDateTime.now());
 
                 return ResponseEntity.ok(response);
@@ -84,7 +81,7 @@ public class AddressController {
             APIResponse<Page<Address>> response = new APIResponse<Page<Address>>(
                     HttpStatus.OK.value(),
                     "Get all address success",
-                    categories,
+                    address,
                     LocalDateTime.now());
             return ResponseEntity.ok(response);
         } catch (ServiceException e) {
@@ -117,36 +114,36 @@ public class AddressController {
         }
     }
 
-    @PostMapping
-    private ResponseEntity<APIResponse<Address>> createNewAddress(@Valid @RequestBody AddressRequest request) {
-        try {
+    // @PostMapping
+    // private ResponseEntity<APIResponse<Address>> createNewAddress(@Valid @RequestBody AddressRequest request) {
+    //     try {
 
-            User user = userServiceImpl.getUserById(request.getUser_id());
-            if (user == null)
-                throw new NotFoundException("User not found");
+    //         User user = userServiceImpl.getUserById(request.getUser_id());
+    //         if (user == null)
+    //             throw new NotFoundException("User not found");
 
-            Address product = addressServiceImpl
-                    .addAddress(
-                            Address.builder()
-                                    .province(request.getProvince())
-                                    .district(request.getDistrict())
-                                    .ward(request.getWard())
-                                    .address(request.getAddress())
-                                    .street(request.getStreet())
-                                    .hamlet(request.getHamlet())
-                                    .user(user)
-                                    .build());
-            APIResponse<Address> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Create a new address success",
-                    product, LocalDateTime.now());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            APIResponse<Address> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Fail to create new address",
-                    null, LocalDateTime.now());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
+    //         Address product = addressServiceImpl
+    //                 .addAddress(
+    //                         Address.builder()
+    //                                 .province(request.getProvince())
+    //                                 .district(request.getDistrict())
+    //                                 .ward(request.getWard())
+    //                                 .address(request.getAddress())
+    //                                 .street(request.getStreet())
+    //                                 .hamlet(request.getHamlet())
+    //                                 .user(user)
+    //                                 .build());
+    //         APIResponse<Address> response = new APIResponse<>(HttpStatus.CREATED.value(),
+    //                 "Create a new address success",
+    //                 product, LocalDateTime.now());
+    //         return ResponseEntity.ok(response);
+    //     } catch (Exception e) {
+    //         APIResponse<Address> response = new APIResponse<>(HttpStatus.CREATED.value(),
+    //                 "Fail to create new address",
+    //                 null, LocalDateTime.now());
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    //     }
+    // }
 
     @PutMapping("/{id}")
     private ResponseEntity<APIResponse<Address>> updateAddress(@PathVariable Long id,

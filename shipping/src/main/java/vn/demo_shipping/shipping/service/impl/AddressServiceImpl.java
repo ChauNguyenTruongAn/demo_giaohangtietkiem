@@ -61,11 +61,11 @@ public class AddressServiceImpl implements AddressService {
     public Page<Address> getAllAddress(int page, int size, String request) {
         Sort sort;
         if (request.compareTo("asc") == 0) {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         } else if (request.compareTo("desc") == 0) {
-            sort = Sort.by(Sort.Order.desc("name"));
+            sort = Sort.by(Sort.Order.desc("id"));
         } else {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         }
         Pageable pageable = PageRequest.of(page, size, sort);
         return addressRepository.findAll(pageable);

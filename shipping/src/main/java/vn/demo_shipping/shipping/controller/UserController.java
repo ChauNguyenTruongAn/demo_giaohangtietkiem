@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.User;
+import vn.demo_shipping.shipping.dto.request.AddressRequest;
 import vn.demo_shipping.shipping.dto.request.UserRequest;
 import vn.demo_shipping.shipping.dto.response.APIResponse;
 import vn.demo_shipping.shipping.exception.NotFoundException;
@@ -143,7 +144,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             APIResponse<User> response = new APIResponse<>(HttpStatus.BAD_REQUEST.value(),
-                    "Bad request",
+                    "Bad request" + e.getMessage(),
                     null, LocalDateTime.now());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
@@ -159,6 +160,62 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.ok(new APIResponse<String>(HttpStatus.BAD_REQUEST.value(), "Failure",
                     "Not found User", LocalDateTime.now()));
+        }
+    }
+
+    @PostMapping("/add-address/{id}")
+    private ResponseEntity<APIResponse<User>> addAddress(@Valid @RequestBody AddressRequest request,
+            @PathVariable Long id) {
+        try {
+
+            User user = userServiceImpl.getUserById(id);
+
+            request.setUser_id(id);
+
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            APIResponse<User> response = new APIResponse<>(HttpStatus.CREATED.value(),
+                    "Address for user " + id + "created successful",
+                    userServiceImpl.addAddressToUser(id, request), LocalDateTime.now());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            APIResponse<User> response = new APIResponse<>(HttpStatus.BAD_REQUEST.value(),
+                    "Fail to create a new address",
+                    null, LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @PutMapping("/edit-address/{id}")
+    private ResponseEntity<APIResponse<User>> updateAddress(@PathVariable Long id,
+            @RequestParam Long address_id,
+            @Valid @RequestBody AddressRequest request) {
+        try {
+            User user = userServiceImpl.editAddress(id, address_id, request);
+            APIResponse<User> response = new APIResponse<>(HttpStatus.CREATED.value(),
+                    "Address for user " + id + " updated successfully",
+                    user, LocalDateTime.now());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            APIResponse<User> response = new APIResponse<>(HttpStatus.BAD_REQUEST.value(),
+                    "Bad request",
+                    null, LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @DeleteMapping("remove-address/{id}")
+    private ResponseEntity<APIResponse<User>> deleteAddress(@PathVariable Long id, @RequestParam Long address_id) {
+        try {
+            User result = userServiceImpl.removeAddressFromUser(id, address_id);
+            APIResponse<User> response = new APIResponse<>(HttpStatus.OK.value(), "Success",
+                    result, LocalDateTime.now());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(new APIResponse<User>(HttpStatus.NO_CONTENT.value(), "Failure",
+                            null, LocalDateTime.now()));
         }
     }
 

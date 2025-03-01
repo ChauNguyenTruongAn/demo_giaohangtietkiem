@@ -1,6 +1,7 @@
 package vn.demo_shipping.shipping.dto.request;
 
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -12,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.demo_shipping.shipping.domain.Address;
+import vn.demo_shipping.shipping.domain.Invoice;
 import vn.demo_shipping.shipping.dto.validator.GenderSubset;
 import vn.demo_shipping.shipping.util.Gender;
 
@@ -43,9 +46,7 @@ public class UserRequest {
     @NotBlank(message = "Please fill a value for password!")
     private String password;
 
-    @NotNull(message = "Please fill a value for address id")
-    private Long[] addresses;
+    private Set<Address> addresses;
 
-    @NotNull(message = "Please fill a value for invoice id")
-    private Long[] invoices;
+    private Set<Invoice> invoices;
 }

@@ -32,7 +32,7 @@ public class WarehouseController {
 
     private final WarehouseServiceImpl warehouseServiceImpl;
 
-     @GetMapping("/all")
+    @GetMapping("/all")
     private ResponseEntity<APIResponse<List<Warehouse>>> getAllWarehouse() {
         try {
             List<Warehouse> categories = warehouseServiceImpl.getAllWarehouse();
@@ -122,12 +122,12 @@ public class WarehouseController {
                 throw new IllegalArgumentException("Invalid request");
 
             APIResponse<Warehouse> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Create a new warehouse success",
+                    "New warehouse created successfully",
                     warehouseServiceImpl.addWarehouse(request), LocalDateTime.now());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            APIResponse<Warehouse> response = new APIResponse<>(HttpStatus.CREATED.value(),
-                    "Create a new warehouse success",
+            APIResponse<Warehouse> response = new APIResponse<>(HttpStatus.NO_CONTENT.value(),
+                    "New warehouse created failure",
                     null, LocalDateTime.now());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

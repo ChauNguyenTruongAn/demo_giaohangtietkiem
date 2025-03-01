@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Invoice;
+import vn.demo_shipping.shipping.domain.InvoiceProductId;
+import vn.demo_shipping.shipping.domain.OrderDetail;
 import vn.demo_shipping.shipping.dto.request.InvoiceRequest;
+import vn.demo_shipping.shipping.dto.request.OrderDetailRequest;
 import vn.demo_shipping.shipping.dto.response.APIResponse;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.ServiceException;
@@ -115,7 +118,7 @@ public class InvoiceController {
     }
 
     @PostMapping
-    private ResponseEntity<APIResponse<Invoice>> createNewInvoice(@Valid @RequestBody InvoiceRequest request) {
+    private ResponseEntity<APIResponse<Invoice>> createNewInvoice(@RequestBody InvoiceRequest request) {
         try {
             Invoice invoice = invoiceServiceImpl
                     .addInvoice(request);
@@ -166,5 +169,35 @@ public class InvoiceController {
                     "Not found Invoice", LocalDateTime.now()));
         }
 
+    }
+
+    @PostMapping("/add-product/{id}")
+    private ResponseEntity<APIResponse<Invoice>> addProductIntoInvoice(
+            @PathVariable Long id,
+            @RequestBody OrderDetailRequest orderDetailRequest) {
+
+        APIResponse<Invoice> response = APIResponse.<Invoice>builder()
+                .status(HttpStatus.CREATED.value())
+                .message("Created Successful")
+                .data(invoiceServiceImpl.addProduct(id, orderDetailRequest))
+                .create_time(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping("/remove-product/{id}")
+    private ResponseEntity<APIResponse<Invoice>> removeProductFromInvoice(
+            @PathVariable Long id,
+            @RequestBody InvoiceProductId invoiceProductId) {
+
+        APIResponse<Invoice> response = APIResponse.<Invoice>builder()
+                .status(HttpStatus.NO_CONTENT.value())
+                .message("Deleted Successful")
+                .data(invoiceServiceImpl.removeProduct(id, invoiceProductId))
+                .create_time(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

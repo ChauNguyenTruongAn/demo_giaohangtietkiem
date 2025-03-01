@@ -25,6 +25,8 @@ public interface UserService {
 
     User removeAddressFromUser(Long id, Long addressId);
 
+    User editAddress(Long user_id, Long address_id, AddressRequest request);
+
     User addInvoice(Long id, InvoiceRequest request);
 
     User remInvoice(Long id, Long invoiceRequest);

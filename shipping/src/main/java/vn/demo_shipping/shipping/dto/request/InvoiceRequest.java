@@ -15,15 +15,11 @@ import vn.demo_shipping.shipping.domain.InvoiceProductId;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Valid
 public class InvoiceRequest {
-    @NotNull(message = "Please fill a value for total")
-    @Min(value = 0, message = "Value not ")
+
     private Double total;
 
-    @NotNull(message = "Please fill a value for order_detail_id")
     private InvoiceProductId order_detail_id;
 
-    @NotNull(message = "Please fill a value for user id")
     private Long user_id;
 }

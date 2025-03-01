@@ -2,6 +2,9 @@ package vn.demo_shipping.shipping.domain;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -24,11 +27,13 @@ import lombok.Setter;
 public class Invoice extends AbstractEntity<Long> {
     private Double total;
 
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<OrderDetail> orderDetails;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     public void addOrderDetail(OrderDetail orderDetail) {
@@ -36,7 +41,6 @@ public class Invoice extends AbstractEntity<Long> {
             throw new IllegalArgumentException("Invalid order detail");
         }
         if (!orderDetails.contains(orderDetail)) {
-            orderDetail.setInvoice(this);
             orderDetails.add(orderDetail);
         }
     }

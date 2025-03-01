@@ -18,17 +18,17 @@ import vn.demo_shipping.shipping.domain.InvoiceProductId;
 @AllArgsConstructor
 @Valid
 public class OrderDetailRequest {
-
-    @NotNull(message = "OrderDetail can not null")
-    private InvoiceProductId id;
-
-    @NotNull(message = "Total is not null")
+    @NotNull(message = "Quantity is not null")
     @Min(0)
-    private double total;
+    private Integer quantity;
+
+    @NotNull(message = "Tax is not null")
+    @Min(0)
+    private Double tax;
 
     @NotNull(message = "Invalid products")
     @NotEmpty(message = "Order details must have at least one product")
-    private Long[] products;
+    private Long product_id;
 
     @NotNull(message = "Order detail must have associated with an invoice. Invoice id is null")
     private Long invoice_id;

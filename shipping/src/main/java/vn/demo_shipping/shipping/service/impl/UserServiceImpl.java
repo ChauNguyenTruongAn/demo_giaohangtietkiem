@@ -1,9 +1,6 @@
 package vn.demo_shipping.shipping.service.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,16 +42,8 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(request.getEmail());
         existingUser.setUsername(request.getUsername());
         existingUser.setPassword(request.getPassword());
-
-        for (Long address_id : request.getAddresses()) {
-            existingUser.addAddress(addressRepository.findById(address_id)
-                    .orElseThrow(() -> new NotFoundException("Not found address")));
-        }
-
-        for (Long invoice_id : request.getInvoices()) {
-            existingUser.addAddress(addressRepository.findById(invoice_id)
-                    .orElseThrow(() -> new NotFoundException("Not found address")));
-        }
+        existingUser.setAddresses(null);
+        existingUser.setInvoices(null);
 
         return userRepository.save(existingUser);
     }
@@ -71,11 +60,11 @@ public class UserServiceImpl implements UserService {
     public Page<User> getAllUser(int page, int size, String request) {
         Sort sort;
         if (request.compareTo("asc") == 0) {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         } else if (request.compareTo("desc") == 0) {
-            sort = Sort.by(Sort.Order.desc("name"));
+            sort = Sort.by(Sort.Order.desc("id"));
         } else {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         }
         Pageable pageable = PageRequest.of(page, size, sort);
         return userRepository.findAll(pageable);
@@ -98,21 +87,14 @@ public class UserServiceImpl implements UserService {
 
         // get address
 
-        Set<Address> newAddresses = new HashSet<>();
+        // Set<Address> newAddresses;
 
-        for (Long address_id : request.getAddresses()) {
-            Address address = addressRepository.findById(address_id).orElseThrow(
-                    () -> new NotFoundException("Invalid address or address is null"));
-            newAddresses.add(address);
-        }
+        // newAddresses = request.getAddresses() == null ? new HashSet<>() : request.getAddresses();
 
-        // get invoice
-        Set<Invoice> newInvoices = new HashSet<>();
-        for (Long invoice_id : request.getInvoices()) {
-            Invoice invoice = invoiceRepository.findById(invoice_id).orElseThrow(
-                    () -> new NotFoundException("Invalid invoice"));
-            newInvoices.add(invoice);
-        }
+        // // get invoice
+        // Set<Invoice> newInvoices;
+
+        // newInvoices = request.getInvoices() == null ? new HashSet<>() : request.getInvoices();
 
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
@@ -124,8 +106,8 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(request.getEmail());
         existingUser.setUsername(request.getUsername());
         existingUser.setPassword(request.getPassword());
-        existingUser.setAddresses(newAddresses);
-        existingUser.setInvoices(newInvoices);
+        //existingUser.setAddresses(newAddresses);
+        //existingUser.setInvoices(newInvoices);
         return userRepository.save(existingUser);
     }
 
@@ -167,8 +149,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addInvoice(Long id, InvoiceRequest request) {
 
-        
-
         User user = userRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("User not found"));
 
@@ -195,6 +175,28 @@ public class UserServiceImpl implements UserService {
 
         user.removeInvoice(invoice);
         return userRepository.save(user);
+    }
+
+    @Override
+    public User editAddress(Long id, Long address_id, AddressRequest address) {
+        try {
+            User user = userRepository.findById(id).orElseThrow(
+                    () -> new NotFoundException("User does not exists in database"));
+
+            Address currentAddress = addressRepository.findById(address_id)
+                    .orElseThrow(() -> new NotFoundException("Can't find product in database"));
+
+            currentAddress.setProvince(address.getProvince());
+            currentAddress.setDistrict(address.getDistrict());
+            currentAddress.setWard(address.getWard());
+            currentAddress.setStreet(address.getStreet());
+            currentAddress.setAddress(address.getAddress());
+            currentAddress.setHamlet(address.getHamlet());
+            user.addAddress(currentAddress);
+            return userRepository.save(user);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Can't find product in database");
+        }
     }
 
 }

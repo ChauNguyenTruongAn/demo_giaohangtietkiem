@@ -1,9 +1,6 @@
 package vn.demo_shipping.shipping.service.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,11 +47,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public Page<OrderDetail> getAllOrderDetail(int page, int size, String request) {
         Sort sort;
         if (request.compareTo("asc") == 0) {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         } else if (request.compareTo("desc") == 0) {
-            sort = Sort.by(Sort.Order.desc("name"));
+            sort = Sort.by(Sort.Order.desc("id"));
         } else {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         }
         Pageable pageable = PageRequest.of(page, size, sort);
         return orderDetailRepository.findAll(pageable);
@@ -76,22 +73,19 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public OrderDetail updateOrderDetail(InvoiceProductId id, OrderDetailRequest request) {
 
         // get products
-        Set<Product> newProducts = new HashSet<>();
-        for (Long product_id : request.getProducts()) {
-            Product product = productRepository.findById(product_id).orElseThrow(
-                    () -> new NotFoundException("Invalid invoice"));
-            newProducts.add(product);
-        }
+        Product product = productRepository.findById(request.getProduct_id()).orElseThrow(
+                () -> new NotFoundException("Invalid invoice"));
 
         Invoice invoice = invoiceRepository.findById(request.getInvoice_id()).orElseThrow(
-                () -> new NotFoundException("Invoice not found"));
+                () -> new NotFoundException("Invalid invoice"));
 
         OrderDetail existingOrderDetail = orderDetailRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("OrderDetail with ID " + id + " not found"));
 
-        existingOrderDetail.setTotal(request.getTotal());
+        existingOrderDetail.setQuantity(request.getQuantity());
+        existingOrderDetail.setTax(request.getTax());
         existingOrderDetail.setInvoice(invoice);
-        existingOrderDetail.setProducts(newProducts);
+        existingOrderDetail.setProduct(product);
         return orderDetailRepository.save(existingOrderDetail);
     }
 

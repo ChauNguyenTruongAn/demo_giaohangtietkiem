@@ -2,7 +2,6 @@ package vn.demo_shipping.shipping.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,6 +33,5 @@ public class AddressRequest {
     @NotBlank(message = "District does not hamlet")
     private String hamlet;
 
-    @NotNull(message = "Invalid user")
     private Long user_id;
 }

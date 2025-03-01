@@ -55,9 +55,9 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> getAllProduct(int page, int size, String request) {
         Sort sort;
         if (request.compareTo("asc") == 0)
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         else
-            sort = Sort.by(Sort.Order.desc("name"));
+            sort = Sort.by(Sort.Order.desc("id"));
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAll(pageable);
     }

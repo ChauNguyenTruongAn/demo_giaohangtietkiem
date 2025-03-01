@@ -28,6 +28,6 @@ public class Warehouse extends AbstractEntity<Long> {
     private String pick_tel;
     private String pick_email;
 
-    @OneToOne(mappedBy = "warehouse")
+    @OneToOne(mappedBy = "warehouses")
     private Order order;
 }

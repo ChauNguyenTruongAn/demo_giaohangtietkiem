@@ -29,8 +29,8 @@ public class WarehouseServiceImpl implements WarehouseService {
         if (request == null)
             throw new NullObjectException("Warehouse is null!!");
 
-        Order order = orderRepository.findById(request.getOrder_id()).orElseThrow(
-                () -> new NotFoundException("Not found Order"));
+        // Order order = orderRepository.findById(request.getOrder_id()).orElseThrow(
+        //         () -> new NotFoundException("Not found Order"));
 
         Warehouse existingWarehouse = new Warehouse();
 
@@ -44,7 +44,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         existingWarehouse.setPick_street(request.getPick_street());
         existingWarehouse.setPick_tel(request.getPick_tel());
         existingWarehouse.setPick_email(request.getPick_email());
-        existingWarehouse.setOrder(order);
+        //existingWarehouse.setOrder(order);
 
         return warehouseRepository.save(existingWarehouse);
     }
@@ -61,11 +61,11 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Page<Warehouse> getAllWarehouse(int page, int size, String request) {
         Sort sort;
         if (request.compareTo("asc") == 0) {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         } else if (request.compareTo("desc") == 0) {
-            sort = Sort.by(Sort.Order.desc("name"));
+            sort = Sort.by(Sort.Order.desc("id"));
         } else {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         }
         Pageable pageable = PageRequest.of(page, size, sort);
         return warehouseRepository.findAll(pageable);

@@ -1,6 +1,6 @@
 package vn.demo_shipping.shipping.domain;
 
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -26,15 +26,19 @@ public class OrderDetail {
     @EmbeddedId
     private InvoiceProductId id;
 
-    private Double total;
+    private Double tax;
+
+    private Integer quantity;
 
     @ManyToOne
-    @MapsId("productId")
+    @MapsId("product_id")
     @JoinColumn(name = "product_id")
-    private Set<Product> products;
+    @JsonBackReference
+    private Product product;
 
     @ManyToOne
-    @MapsId("invoiceId")
+    @MapsId("invoice_id")
     @JoinColumn(name = "invoice_id")
+    @JsonBackReference
     private Invoice invoice;
 }

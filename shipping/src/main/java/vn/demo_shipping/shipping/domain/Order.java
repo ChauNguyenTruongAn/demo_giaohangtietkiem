@@ -1,5 +1,7 @@
 package vn.demo_shipping.shipping.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -17,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "invoices")
+@Table(name = "orders")
 public class Order extends AbstractEntity<Long> {
     private String note;
     private String return_name;
@@ -33,12 +35,14 @@ public class Order extends AbstractEntity<Long> {
     private Double total_weight;
     private Double value;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "invoice_id")
+    @JsonBackReference
     private Invoice invoice;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "warehouse_id")
+    @JsonBackReference
     private Warehouse warehouses;
 
     public void addInvoice(Invoice invoice) {

@@ -63,8 +63,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String deleteOrder(Long id) {
-        if (!orderRepository.existsById(id))
-            throw new NullObjectException("Order is null!!");
+        // if (!orderRepository.existsById(id))
+        // throw new NullObjectException("Order is null!!");
+
+        Order order = orderRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Not found order"));
+
+        order.setInvoice(null);
+        order.setWarehouses(null);
+
+        orderRepository.save(order);
+
         orderRepository.deleteById(id);
         return "Delete order success";
     }
@@ -73,11 +82,11 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> getAllOrder(int page, int size, String request) {
         Sort sort;
         if (request.compareTo("asc") == 0) {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         } else if (request.compareTo("desc") == 0) {
-            sort = Sort.by(Sort.Order.desc("name"));
+            sort = Sort.by(Sort.Order.desc("id"));
         } else {
-            sort = Sort.by(Sort.Order.asc("name"));
+            sort = Sort.by(Sort.Order.asc("id"));
         }
         Pageable pageable = PageRequest.of(page, size, sort);
         return orderRepository.findAll(pageable);

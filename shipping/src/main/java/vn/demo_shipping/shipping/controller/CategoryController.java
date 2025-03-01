@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Category;
 import vn.demo_shipping.shipping.dto.request.CategoryRequest;
+import vn.demo_shipping.shipping.dto.request.ProductRequest;
 import vn.demo_shipping.shipping.dto.response.APIResponse;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.ServiceException;
@@ -165,4 +166,21 @@ public class CategoryController {
         }
     }
 
+    @PostMapping("/add-product/{id}")
+    public ResponseEntity<Category> addProductToCategory(
+            @PathVariable Long id,
+            @RequestBody ProductRequest request) {
+        Category updatedCategory = categoryServiceImpl.addProduct(id, request);
+
+        return ResponseEntity.ok(updatedCategory);
+    }
+
+    @DeleteMapping("/remove-product/{id}")
+    public ResponseEntity<Category> removeProductFromCategory(
+            @PathVariable Long id,
+            @RequestParam Long productId) {
+        Category updatedCategory = categoryServiceImpl.removeCategory(id, productId);
+
+        return ResponseEntity.ok(updatedCategory);
+    }
 }

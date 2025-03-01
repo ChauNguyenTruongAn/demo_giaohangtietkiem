@@ -3,6 +3,7 @@ package vn.demo_shipping.shipping.domain;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -36,6 +37,6 @@ public class Product extends AbstractEntity<Long> {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "order_detail_id")
+    @JsonManagedReference
     private Set<OrderDetail> order_detail;
 }
