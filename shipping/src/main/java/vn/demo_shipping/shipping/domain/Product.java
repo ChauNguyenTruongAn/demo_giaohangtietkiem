@@ -33,10 +33,10 @@ public class Product extends AbstractEntity<Long> {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference
+    @JsonBackReference("category-product")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("product-order_detail")
     private Set<OrderDetail> order_detail;
 }

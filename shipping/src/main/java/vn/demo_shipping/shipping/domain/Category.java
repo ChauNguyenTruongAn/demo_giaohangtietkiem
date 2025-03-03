@@ -27,7 +27,7 @@ public class Category extends AbstractEntity<Long> {
     private String description;
 
     @OneToMany(mappedBy = "category", orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("category-product")
     private Set<Product> products;
 
     public void addProduct(Product product) {

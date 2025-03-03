@@ -17,22 +17,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Order;
 import vn.demo_shipping.shipping.dto.request.OrderRequest;
-import vn.demo_shipping.shipping.dto.request.ShippingRequest;
 import vn.demo_shipping.shipping.dto.response.APIResponse;
 import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.ServiceException;
+import vn.demo_shipping.shipping.repository.GHTKOrderRepository;
+import vn.demo_shipping.shipping.service.impl.ExternalApiService;
 import vn.demo_shipping.shipping.service.impl.OrderServiceImpl;
-import vn.demo_shipping.shipping.util.ExternalApiService;
 
 @RestController
 @RequestMapping("/v1/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderServiceImpl orderServiceImpl;
+    private final GHTKOrderRepository ghtkOrderRepository;
 
     @GetMapping("/all")
     private ResponseEntity<APIResponse<List<Order>>> getAllOrder() {
@@ -175,11 +178,13 @@ public class OrderController {
     private ResponseEntity<String> shippingOrder(@Valid @RequestBody OrderRequest request) {
 
         RestTemplate template = new RestTemplate();
-        ExternalApiService externalApiService = new ExternalApiService(template);
+        ExternalApiService externalApiService = new ExternalApiService(
+                template, ghtkOrderRepository, new ObjectMapper());
 
         String response = externalApiService.sendRequest("2ea86fdf4850e544f1074d2a38cd5ade0144f3bb", "S22863729",
                 orderServiceImpl.shippingOrder(request));
 
         return ResponseEntity.status(201).body(response);
     }
+
 }

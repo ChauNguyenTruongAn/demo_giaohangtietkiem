@@ -52,6 +52,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // set new value
         existingInvoice.setTotal(request.getTotal());
         existingInvoice.setUser(user);
+        existingInvoice.setAddress_id(request.getAddress_id());
         // existingInvoice.addOrderDetail(orderDetail);
 
         return invoiceRepository.save(existingInvoice);

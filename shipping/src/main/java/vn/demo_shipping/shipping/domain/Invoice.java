@@ -28,12 +28,12 @@ public class Invoice extends AbstractEntity<Long> {
     private Double total;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("invoice-order_detail")
     private Set<OrderDetail> orderDetails;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonBackReference("user-invoice")
     private User user;
 
     private Long address_id;

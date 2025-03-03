@@ -33,12 +33,12 @@ public class OrderDetail {
     @ManyToOne
     @MapsId("product_id")
     @JoinColumn(name = "product_id")
-    @JsonBackReference
+    @JsonBackReference("product-order_detail")
     private Product product;
 
     @ManyToOne
     @MapsId("invoice_id")
     @JoinColumn(name = "invoice_id")
-    @JsonBackReference
+    @JsonBackReference("invoice-order_detail")
     private Invoice invoice;
 }

@@ -32,6 +32,6 @@ public class Address extends AbstractEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonBackReference("user-address")
     public User user;
 }

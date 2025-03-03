@@ -34,13 +34,13 @@ public class User extends AbstractEntity<Long> {
     private String password;
 
     @Builder.Default
-    @JsonManagedReference
+    @JsonManagedReference("user-address")
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Address> addresses = new HashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("user-invoice")
     Set<Invoice> invoices = new HashSet<>();
 
     public void addAddress(Address address) {

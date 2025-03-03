@@ -1,7 +1,10 @@
 package vn.demo_shipping.shipping.dto.request;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -24,7 +27,7 @@ import vn.demo_shipping.shipping.util.Gender;
 @NoArgsConstructor
 @AllArgsConstructor
 @Valid
-public class UserRequest {
+public class UserRequest implements Serializable {
     @NotBlank(message = "Please fill a value for FullName")
     private String full_name;
 
@@ -32,6 +35,7 @@ public class UserRequest {
     private Gender gender;
 
     @NotNull(message = "Date of birth must be fill")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date date_of_birth;
 
     @Pattern(regexp = "^\\d{10}$", message = "Invalid phone number")

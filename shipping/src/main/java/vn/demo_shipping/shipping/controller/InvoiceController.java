@@ -20,7 +20,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Invoice;
 import vn.demo_shipping.shipping.domain.InvoiceProductId;
-import vn.demo_shipping.shipping.domain.OrderDetail;
 import vn.demo_shipping.shipping.dto.request.InvoiceRequest;
 import vn.demo_shipping.shipping.dto.request.OrderDetailRequest;
 import vn.demo_shipping.shipping.dto.response.APIResponse;

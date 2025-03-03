@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.demo_shipping.shipping.domain.InvoiceProductId;
 
 @Getter
 @Setter
