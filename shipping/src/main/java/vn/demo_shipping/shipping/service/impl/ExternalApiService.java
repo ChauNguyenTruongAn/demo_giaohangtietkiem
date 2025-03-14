@@ -15,23 +15,19 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.GHTKOrder;
 import vn.demo_shipping.shipping.dto.request.ShippingRequest;
 import vn.demo_shipping.shipping.repository.GHTKOrderRepository;
 
 @Service
+@RequiredArgsConstructor
 public class ExternalApiService {
     
     private final RestTemplate restTemplate;
     private final GHTKOrderRepository ghtkOrderRepository;
     private final ObjectMapper objectMapper;
 
-    @Autowired
-    public ExternalApiService(RestTemplate restTemplate, GHTKOrderRepository ghtkOrderRepository, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
-        this.ghtkOrderRepository = ghtkOrderRepository;
-        this.objectMapper = objectMapper;
-    }
 
     public String sendRequest(String token, String clientId, ShippingRequest requestBody) {
         String url = "https://services.giaohangtietkiem.vn/services/shipment/order";
@@ -47,15 +43,14 @@ public class ExternalApiService {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-
-        // Chuyển đổi response JSON thành Object
+        
         try {
             JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
             JsonNode orderNode = rootNode.path("order");
 
             if (!orderNode.isMissingNode()) {
                 GHTKOrder order = objectMapper.treeToValue(orderNode, GHTKOrder.class);
-                ghtkOrderRepository.save(order); // Lưu vào DB
+                ghtkOrderRepository.save(order);
             }
         } catch (Exception e) {
             e.printStackTrace();

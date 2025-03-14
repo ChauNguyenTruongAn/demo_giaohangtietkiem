@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Warehouse;
@@ -32,6 +35,11 @@ public class WarehouseController {
 
     private final WarehouseServiceImpl warehouseServiceImpl;
 
+    @Operation(summary = "Lấy tất cả kho", description = "Lấy tất cả các kho từ cơ sở dữ liệu.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy danh sách kho thành công"),
+            @ApiResponse(responseCode = "204", description = "Không tìm thấy kho nào")
+    })
     @GetMapping("/all")
     private ResponseEntity<APIResponse<List<Warehouse>>> getAllWarehouse() {
         try {
@@ -61,6 +69,11 @@ public class WarehouseController {
         }
     }
 
+    @Operation(summary = "Lấy danh sách kho với phân trang", description = "Lấy danh sách kho với phân trang, kích thước trang và thứ tự theo yêu cầu.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy danh sách kho thành công"),
+            @ApiResponse(responseCode = "204", description = "Không tìm thấy kho nào")
+    })
     @GetMapping
     private ResponseEntity<APIResponse<Page<Warehouse>>> getAllWarehouse(
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -94,6 +107,11 @@ public class WarehouseController {
         }
     }
 
+    @Operation(summary = "Lấy kho theo ID", description = "Lấy thông tin kho theo ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy kho thành công"),
+            @ApiResponse(responseCode = "404", description = "Không tìm thấy kho")
+    })
     @GetMapping("/{id}")
     private ResponseEntity<APIResponse<Warehouse>> getWarehouseById(@PathVariable Long id) {
         APIResponse<Warehouse> response;
@@ -115,6 +133,11 @@ public class WarehouseController {
         }
     }
 
+    @Operation(summary = "Tạo kho mới", description = "Tạo một kho mới với thông tin được cung cấp.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Tạo kho mới thành công"),
+            @ApiResponse(responseCode = "400", description = "Yêu cầu không hợp lệ")
+    })
     @PostMapping
     private ResponseEntity<APIResponse<Warehouse>> createNewWarehouse(@Valid @RequestBody WarehouseRequest request) {
         try {
@@ -133,6 +156,11 @@ public class WarehouseController {
         }
     }
 
+    @Operation(summary = "Cập nhật thông tin kho", description = "Cập nhật thông tin kho theo ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cập nhật kho thành công"),
+            @ApiResponse(responseCode = "400", description = "Yêu cầu không hợp lệ")
+    })
     @PutMapping("/{id}")
     private ResponseEntity<APIResponse<Warehouse>> updateWarehouse(@PathVariable Long id,
             @Valid @RequestBody WarehouseRequest request) {
@@ -150,6 +178,12 @@ public class WarehouseController {
         }
     }
 
+    @Operation(summary = "Xóa kho", description = "Xóa kho theo ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Xóa kho thành công"),
+            @ApiResponse(responseCode = "400", description = "Yêu cầu không hợp lệ"),
+            @ApiResponse(responseCode = "404", description = "Không tìm thấy kho")
+    })
     @DeleteMapping("/{id}")
     private ResponseEntity<APIResponse<String>> deleteWarehouse(@PathVariable Long id) {
         try {

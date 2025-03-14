@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Category;
@@ -27,6 +32,7 @@ import vn.demo_shipping.shipping.exception.ServiceException;
 import vn.demo_shipping.shipping.service.impl.CategoryServiceImpl;
 import vn.demo_shipping.shipping.service.impl.ProductServiceImpl;
 
+@Tag(name = "Sản phẩm")
 @RestController
 @RequestMapping("/v1/api/products")
 @RequiredArgsConstructor
@@ -34,6 +40,12 @@ public class ProductController {
     private final ProductServiceImpl productServiceImpl;
     private final CategoryServiceImpl categoryServiceImpl;
 
+    @Operation(summary = "Lấy tất cả sản phẩm", description = "API này trả về danh sách tất cả các sản phẩm trong hệ thống. Nếu không có sản phẩm nào, trả về mã trạng thái 204 (No Content).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy tất cả sản phẩm thành công"),
+            @ApiResponse(responseCode = "204", description = "Không có sản phẩm nào"),
+            @ApiResponse(responseCode = "500", description = "Lỗi hệ thống khi lấy sản phẩm")
+    })
     @GetMapping("/all")
     private ResponseEntity<APIResponse<List<Product>>> getAllProduct() {
         try {
@@ -63,11 +75,19 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Lấy danh sách sản phẩm với phân trang", description = "API này trả về danh sách sản phẩm với phân trang. Các tham số bao gồm số trang, số lượng mỗi trang và thứ tự sắp xếp.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy danh sách sản phẩm thành công"),
+            @ApiResponse(responseCode = "204", description = "Không có sản phẩm nào"),
+            @ApiResponse(responseCode = "500", description = "Lỗi hệ thống khi lấy sản phẩm")
+    })
     @GetMapping
-    private ResponseEntity<APIResponse<Page<Product>>> getAllProduct(
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "2") Integer size,
-            @RequestParam(required = false, defaultValue = "asc") String sort) {
+    public ResponseEntity<APIResponse<Page<Product>>> getAllProduct(
+            @RequestParam(required = false, defaultValue = "0") @Parameter(description = "Số trang cần lấy") Integer page,
+
+            @RequestParam(required = false, defaultValue = "2") @Parameter(description = "Số lượng sản phẩm mỗi trang") Integer size,
+
+            @RequestParam(required = false, defaultValue = "asc") @Parameter(description = "Thứ tự sắp xếp (asc hoặc desc)") String sort) {
 
         try {
             Page<Product> categories = productServiceImpl.getAllProduct(page, size, sort);
@@ -96,6 +116,12 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Lấy sản phẩm theo ID", description = "API này trả về sản phẩm dựa trên ID cung cấp. Nếu không tìm thấy sản phẩm, sẽ trả về mã lỗi 404.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy sản phẩm thành công"),
+            @ApiResponse(responseCode = "404", description = "Sản phẩm không tồn tại"),
+            @ApiResponse(responseCode = "500", description = "Lỗi hệ thống khi lấy sản phẩm")
+    })
     @GetMapping("/{id}")
     private ResponseEntity<APIResponse<Product>> getProductById(@PathVariable Long id) {
         APIResponse<Product> response;
@@ -117,6 +143,11 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Tạo sản phẩm mới", description = "API này cho phép tạo một sản phẩm mới với thông tin từ request.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Tạo sản phẩm thành công"),
+            @ApiResponse(responseCode = "400", description = "Dữ liệu đầu vào không hợp lệ")
+    })
     @PostMapping
     private ResponseEntity<APIResponse<Product>> createNewProduct(@Valid @RequestBody ProductRequest request) {
         try {
@@ -137,6 +168,12 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Cập nhật sản phẩm", description = "API này cho phép cập nhật thông tin sản phẩm với ID được cung cấp.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cập nhật sản phẩm thành công"),
+            @ApiResponse(responseCode = "400", description = "Dữ liệu đầu vào không hợp lệ"),
+            @ApiResponse(responseCode = "404", description = "Sản phẩm không tồn tại")
+    })
     @PutMapping("/{id}")
     private ResponseEntity<APIResponse<Product>> updateProduct(@PathVariable Long id,
             @Valid @RequestBody ProductRequest request) {
@@ -154,6 +191,12 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Xóa sản phẩm", description = "API này cho phép xóa một sản phẩm dựa trên ID cung cấp. Nếu sản phẩm không tồn tại, sẽ trả về mã lỗi 404.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Xóa sản phẩm thành công"),
+            @ApiResponse(responseCode = "400", description = "Dữ liệu đầu vào không hợp lệ"),
+            @ApiResponse(responseCode = "404", description = "Sản phẩm không tồn tại")
+    })
     @DeleteMapping("/{id}")
     private ResponseEntity<APIResponse<String>> deleteProduct(@PathVariable Long id) {
         try {

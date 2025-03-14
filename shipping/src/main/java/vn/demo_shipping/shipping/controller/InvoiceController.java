@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.demo_shipping.shipping.domain.Invoice;
@@ -27,12 +31,19 @@ import vn.demo_shipping.shipping.exception.NotFoundException;
 import vn.demo_shipping.shipping.exception.ServiceException;
 import vn.demo_shipping.shipping.service.impl.InvoiceServiceImpl;
 
+@Tag(name = "Hóa đơn")
 @RestController
 @RequestMapping("/v1/api/invoices")
 @RequiredArgsConstructor
 public class InvoiceController {
     private final InvoiceServiceImpl invoiceServiceImpl;
 
+    @Operation(summary = "Lấy tất cả hóa đơn", description = "API này trả về tất cả hóa đơn trong hệ thống. Nếu không có hóa đơn nào, trả về mã trạng thái 204 (No Content).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy tất cả hóa đơn thành công"),
+            @ApiResponse(responseCode = "204", description = "Không có hóa đơn nào"),
+            @ApiResponse(responseCode = "500", description = "Lỗi hệ thống khi lấy hóa đơn")
+    })
     @GetMapping("/all")
     private ResponseEntity<APIResponse<List<Invoice>>> getAllInvoice() {
         try {
@@ -62,6 +73,12 @@ public class InvoiceController {
         }
     }
 
+    @Operation(summary = "Lấy hóa đơn theo phân trang", description = "API này trả về danh sách hóa đơn với phân trang. Các tham số bao gồm số trang, số lượng mỗi trang và thứ tự sắp xếp.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy danh sách hóa đơn thành công"),
+            @ApiResponse(responseCode = "204", description = "Không có hóa đơn nào"),
+            @ApiResponse(responseCode = "500", description = "Lỗi hệ thống khi lấy hóa đơn")
+    })
     @GetMapping
     private ResponseEntity<APIResponse<Page<Invoice>>> getAllInvoice(
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -95,6 +112,12 @@ public class InvoiceController {
         }
     }
 
+    @Operation(summary = "Lấy hóa đơn theo ID", description = "API này trả về một hóa đơn dựa trên ID cung cấp. Nếu không tìm thấy hóa đơn, trả về mã lỗi 404.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lấy hóa đơn thành công"),
+            @ApiResponse(responseCode = "404", description = "Hóa đơn không tồn tại"),
+            @ApiResponse(responseCode = "500", description = "Lỗi hệ thống khi lấy hóa đơn")
+    })
     @GetMapping("/{id}")
     private ResponseEntity<APIResponse<Invoice>> getInvoiceById(@PathVariable Long id) {
         APIResponse<Invoice> response;
@@ -116,6 +139,11 @@ public class InvoiceController {
         }
     }
 
+    @Operation(summary = "Tạo hóa đơn mới", description = "API này cho phép tạo một hóa đơn mới với các thông tin từ request.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Tạo hóa đơn thành công"),
+            @ApiResponse(responseCode = "400", description = "Dữ liệu đầu vào không hợp lệ")
+    })
     @PostMapping
     private ResponseEntity<APIResponse<Invoice>> createNewInvoice(@RequestBody InvoiceRequest request) {
         try {
@@ -133,6 +161,12 @@ public class InvoiceController {
         }
     }
 
+    @Operation(summary = "Cập nhật hóa đơn", description = "API này cho phép cập nhật thông tin của hóa đơn với ID được cung cấp.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cập nhật hóa đơn thành công"),
+            @ApiResponse(responseCode = "400", description = "Dữ liệu đầu vào không hợp lệ"),
+            @ApiResponse(responseCode = "404", description = "Hóa đơn không tồn tại")
+    })
     @PutMapping("/{id}")
     private ResponseEntity<APIResponse<Invoice>> updateInvoice(@PathVariable Long id,
             @Valid @RequestBody InvoiceRequest request) {
@@ -150,6 +184,12 @@ public class InvoiceController {
         }
     }
 
+    @Operation(summary = "Xóa hóa đơn", description = "API này cho phép xóa một hóa đơn dựa trên ID cung cấp. Nếu hóa đơn không tồn tại, sẽ trả về mã lỗi 404.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Xóa hóa đơn thành công"),
+            @ApiResponse(responseCode = "400", description = "Dữ liệu đầu vào không hợp lệ"),
+            @ApiResponse(responseCode = "404", description = "Hóa đơn không tồn tại")
+    })
     @DeleteMapping("/{id}")
     private ResponseEntity<APIResponse<String>> deleteInvoice(@PathVariable Long id) {
         try {
@@ -170,6 +210,11 @@ public class InvoiceController {
 
     }
 
+    @Operation(summary = "Thêm sản phẩm vào hóa đơn", description = "API này cho phép thêm một sản phẩm vào hóa đơn dựa trên ID hóa đơn.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Thêm sản phẩm vào hóa đơn thành công"),
+            @ApiResponse(responseCode = "404", description = "Hóa đơn không tồn tại")
+    })
     @PostMapping("/add-product/{id}")
     private ResponseEntity<APIResponse<Invoice>> addProductIntoInvoice(
             @PathVariable Long id,
@@ -185,6 +230,11 @@ public class InvoiceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Xóa sản phẩm khỏi hóa đơn", description = "API này cho phép xóa một sản phẩm khỏi hóa đơn dựa trên ID sản phẩm.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Xóa sản phẩm khỏi hóa đơn thành công"),
+            @ApiResponse(responseCode = "404", description = "Hóa đơn hoặc sản phẩm không tồn tại")
+    })
     @DeleteMapping("/remove-product/{id}")
     private ResponseEntity<APIResponse<Invoice>> removeProductFromInvoice(
             @PathVariable Long id,

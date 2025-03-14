@@ -8,3 +8,14 @@ spring:
     hibernate.ddl-auto: update
     generate-ddl: true
     show-sql: true
+
+openapi:
+  service:
+    api-docs: /v3/api-docs
+    title: "Shipping API"
+    version: 1.0.0
+    serverUrl: http://localhost:${server.port}
+    serverName: Local Server
+
+server:
+  port: 8080
