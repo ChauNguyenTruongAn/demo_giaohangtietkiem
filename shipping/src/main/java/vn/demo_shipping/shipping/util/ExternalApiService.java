@@ -22,7 +22,7 @@ public class ExternalApiService {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Token", "2ea86fdf4850e544f1074d2a38cd5ade0144f3bb");
+        httpHeaders.set("Token", "172X8NEx658WXkBW1oMX7s0SvCl9eODsA53yPmq");
         httpHeaders.set("X-Client-Source", "S22863729");
 
         Map<String, Object> body = new HashMap<>();

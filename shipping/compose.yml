@@ -1,25 +1,22 @@
-  version: '3.8'
+version: '3.8'
+services:
+  shipping-api:
+    image: anchau0310/myapp:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/demo
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=12345
 
-  services:
-    app:
-      build: .
-      ports:
-        - "8080:8080"
-      depends_on:
-        - mysql
-      environment:
-        # Cấu hình datasource cho Spring Boot (đảm bảo tên host 'mysql' trùng với tên service bên dưới)
-        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/demo?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-        SPRING_DATASOURCE_USERNAME: user
-        SPRING_DATASOURCE_PASSWORD: 12345
-
-    mysql:
-      image: mysql:8.0
-      restart: always
-      environment:
-        MYSQL_DATABASE: demo
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_USER: user
-        MYSQL_PASSWORD: 12345
-      ports:
-        - "3306:3306"
+  mysql-db:
+    image: anchau0310/mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_DATABASE=demo
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=12345
+    ports:
+      - "3306:3306"
