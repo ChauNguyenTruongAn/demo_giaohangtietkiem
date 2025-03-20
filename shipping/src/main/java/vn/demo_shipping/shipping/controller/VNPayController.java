@@ -18,25 +18,38 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import vn.demo_shipping.shipping.config.VNPayConfig;
 
 @RestController
 @Tag(name = "VNPay Controller")
 public class VNPayController {
-    @Operation(method = "GET", summary = "Đừng đụng", description = "Cái này đừng đụng tới")
+    @Operation(method = "GET", summary = "Payment Callback", description = "Xử lý callback của VNPay và chuyển hướng về trang frontend tương ứng với kết quả thanh toán")
     @GetMapping("/api/vnpay/payment-callback")
-    public String paymentCallback(@RequestParam Map<String, String> params) {
+    public void paymentCallback(@RequestParam Map<String, String> params, HttpServletResponse response) {
         String vnp_ResponseCode = params.get("vnp_ResponseCode");
-        if ("00".equals(vnp_ResponseCode)) {
-            return "Thanh toán thành công!";
-        } else {
-            return "Thanh toán thất bại!";
+        try {
+            if ("00".equals(vnp_ResponseCode)) {
+                // Thanh toán thành công: chuyển hướng về trang thành công trên frontend
+                response.sendRedirect("http://localhost:5173/thank-you");
+            } else {
+                // Thanh toán thất bại: chuyển hướng về trang thất bại trên frontend
+                response.sendRedirect("http://localhost:5173/payment-failed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Trong trường hợp xảy ra lỗi, có thể chuyển hướng đến trang lỗi của frontend
+            try {
+                response.sendRedirect("http://your-frontend-url/payment-error");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     @Operation(method = "GET", summary = "Tạo hóa đơn", description = "Đưa vào cái số tiền và sẽ trả về một cái link đó là link thanh toán.")
     @GetMapping("/api/vnpay/create-payment")
-    public String createPayment(HttpServletRequest request, @RequestParam("amount") int amount) {
+    public String createPayment(HttpServletRequest request, @RequestParam("amount") Long amount) {
         try {
             String vnp_Version = "2.1.0";
             String vnp_Command = "pay";

@@ -1,16 +1,15 @@
 package vn.demo_shipping.shipping.config;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class Appconfig {
+@EnableWebMvc
+public class Appconfig implements WebMvcConfigurer {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -24,16 +23,28 @@ public class Appconfig {
     // return objectMapper;
     // }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        config.setAllowCredentials(true);
+    // @Bean
+    // public CorsFilter corsFilter() {
+    // CorsConfiguration config = new CorsConfiguration();
+    // // config.setAllowedOrigins(List.of("*"));
+    // config.setAllowedOriginPatterns(List.of("*"));
+    // config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    // config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    // config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+    // UrlBasedCorsConfigurationSource source = new
+    // UrlBasedCorsConfigurationSource();
+    // source.registerCorsConfiguration("/**", config);
+    // return new CorsFilter(source);
+    // }
+
+    @Override
+    public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*") // Cho phép tất cả origin
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Các phương thức HTTP
+                .allowedHeaders("*") // Cho phép tất cả headers
+                .allowCredentials(true); // Hỗ trợ credentials (cookies, token)
     }
+
 }
